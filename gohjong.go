@@ -5,9 +5,13 @@ import (
 	"strconv"
 )
 
-// ParseHand parse hand to string slice
-func ParseHand(hand string) ([]string, error) {
-	res := make([]string, 0)
+type Tile struct {
+	name string
+}
+
+// ParseHand parse hand to tile slice
+func ParseHand(hand string) ([]Tile, error) {
+	res := make([]Tile, 0)
 
 	pool := make([]uint8, 0)
 	for i := 0; i < len(hand); i++ {
@@ -20,7 +24,7 @@ func ParseHand(hand string) ([]string, error) {
 				}
 
 				for _, p := range pool {
-					res = append(res, string(p)+handstr)
+					res = append(res, Tile{name: string(p) + handstr})
 				}
 
 				pool = make([]uint8, 0)
@@ -29,7 +33,7 @@ func ParseHand(hand string) ([]string, error) {
 					handstr != "D" && handstr != "H" && handstr != "T" {
 					return nil, errors.New("unknown hand")
 				}
-				res = append(res, handstr)
+				res = append(res, Tile{name: handstr})
 			}
 		} else { // num
 			pool = append(pool, hand[i])

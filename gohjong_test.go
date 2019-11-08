@@ -7,11 +7,12 @@ import (
 func TestParseHand(t *testing.T) {
 	testcase := []struct {
 		input    string
-		expected []string
+		expected []Tile
 	}{
-		{"", []string{}},
-		{"111", []string{}},
-		{"111m", []string{"1m", "1m", "1m"}},
+		{"", []Tile{}},
+		{"111", []Tile{}},
+		{"111m", []Tile{Tile{"1m"}, Tile{"1m"}, Tile{"1m"}}},
+		{"m", nil},
 	}
 
 	for _, tt := range testcase {
