@@ -28,3 +28,32 @@ func TestParseHand(t *testing.T) {
 		}
 	}
 }
+
+func TestCheckWaiting(t *testing.T) {
+	testcase := []struct {
+		input           string
+		expectedHand    string
+		expectedWaiting string
+	}{
+		{
+			"1112224588899",
+			"111,222,888,99",
+			"45",
+		},
+	}
+
+	for _, tt := range testcase {
+		actualHand, actualWaiting, err := CheckWaiting(tt.input)
+		if err != nil {
+			t.Errorf("Error: %v\n", err)
+		}
+
+		if tt.expectedHand != actualHand {
+			t.Errorf("Error: expected %v, but got %v\n", tt.expectedHand, actualHand)
+		}
+
+		if tt.expectedWaiting != actualWaiting {
+			t.Errorf("Error: expected %v, but got %v\n", tt.expectedWaiting, actualWaiting)
+		}
+	}
+}
