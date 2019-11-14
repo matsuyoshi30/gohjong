@@ -50,7 +50,8 @@ func ParseHand(hand string) ([]Tile, error) {
 
 // CheckWaiting check waiting tiles
 // returns mentsu, machi, and error
-func CheckWaiting(hand string) (string, string, error) {
+func CheckWaiting(hand string) ([]string, error) {
+	output := make([]string, 0)
 	// TODO
 	// _, err := ParseHand(hand)
 	// if err != nil {
@@ -68,12 +69,12 @@ func CheckWaiting(hand string) (string, string, error) {
 		resthand, kotsu3 := checkKotsu(resthand)
 		resthand, _ = checkKotsu(resthand)
 		if checkTenpai(resthand) {
-			out := strings.Join([]string{kotsu1, kotsu2, kotsu3, toitsu}, ",")
-			return out, resthand, nil
+			out := strings.Join([]string{kotsu1, kotsu2, kotsu3, toitsu, "(" + resthand + ")"}, ",")
+			output = append(output, out)
 		}
 	}
 
-	return "", "", errors.New("not tenpai")
+	return output, nil
 }
 
 func checkTenpai(resthand string) bool {
