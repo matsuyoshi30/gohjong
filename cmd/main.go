@@ -14,5 +14,9 @@ func main() {
 		fmt.Println(err)
 	}
 
+	h = "1235556667899"
+	sl, err := gohjong.CheckWaiting(h)
+	fmt.Println(sl)
+
 	fmt.Println(s)
 }

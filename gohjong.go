@@ -2,6 +2,7 @@ package gohjong
 
 import (
 	"errors"
+	_ "fmt"
 	"strconv"
 	"strings"
 )
@@ -59,10 +60,10 @@ func CheckWaiting(hand string) ([]string, error) {
 	// }
 
 	// check waiting
-	for i := 0; i < 9; i++ {
+	// check toistu kotsu kotsu kotsu kotsu
+	for i := 0; i <= 9; i++ {
 		resthand := ""
 
-		// check toistu kotsu kotsu kotsu kotsu
 		resthand, toitsu := checkToitsu(hand, i)
 		resthand, kotsu1 := checkKotsu(resthand)
 		resthand, kotsu2 := checkKotsu(resthand)
@@ -71,6 +72,30 @@ func CheckWaiting(hand string) ([]string, error) {
 		if checkTenpai(resthand) {
 			out := strings.Join([]string{kotsu1, kotsu2, kotsu3, toitsu, "(" + resthand + ")"}, ",")
 			output = append(output, out)
+		}
+	}
+
+	// check toitsu shuntsu kotsu kotsu kotsu
+	for i := 0; i <= 9; i++ {
+		resthand := ""
+
+		resthand, toitsu := checkToitsu(hand, i)
+		for j := 1; j <= 7; j++ {
+			resthand, shuntsu := checkShuntsu(resthand, j)
+			if shuntsu != "" {
+				resthand, kotsu1 := checkKotsu(resthand)
+				resthand, kotsu2 := checkKotsu(resthand)
+				resthand, kotsu3 := checkKotsu(resthand)
+				if checkTenpai(resthand) {
+					out := ""
+					if toitsu == "" {
+						out = strings.Join([]string{shuntsu, kotsu1, kotsu2, kotsu3, "(" + resthand + ")"}, ",")
+					} else {
+						out = strings.Join([]string{shuntsu, kotsu1, kotsu2, toitsu, "(" + resthand + ")"}, ",")
+					}
+					output = append(output, out)
+				}
+			}
 		}
 	}
 
@@ -96,7 +121,7 @@ func checkTenpai(resthand string) bool {
 
 // checkToitsu whether hand has toitsu pairng n like 11
 func checkToitsu(hand string, n int) (string, string) {
-	tl := []string{"11", "22", "33", "44", "55", "66", "77", "88", "99"}
+	tl := []string{"11", "22", "33", "44", "55", "66", "77", "88", "99", "00"}
 	toitsu := tl[n]
 
 	handstr := strings.Join(strings.Split(hand, toitsu), "")
@@ -105,6 +130,21 @@ func checkToitsu(hand string, n int) (string, string) {
 	}
 
 	return handstr, toitsu
+}
+
+// checkSHuntsu whether hand has shuntsu like 123
+func checkShuntsu(hand string, n int) (string, string) {
+	out := ""
+	n1 := strings.Index(hand, strconv.Itoa(n))
+	n2 := strings.Index(hand, strconv.Itoa(n+1))
+	n3 := strings.Index(hand, strconv.Itoa(n+2))
+
+	if n1 >= 0 && n2 >= 0 && n3 >= 0 {
+		out = strconv.Itoa(n) + strconv.Itoa(n+1) + strconv.Itoa(n+2)
+		hand = hand[0:n1] + hand[n1+1:n2] + hand[n2+1:n3] + hand[n3+1:]
+	}
+
+	return hand, out
 }
 
 // checkKotsu whether hand has kotsu like 111

@@ -42,6 +42,10 @@ func TestCheckWaiting(t *testing.T) {
 			"1112223355566",
 			[]string{"111,222,555,33,(66)", "111,222,555,66,(33)"},
 		},
+		{
+			"1235556668899",
+			[]string{"123,555,666,88,(99)", "123,555,666,99,(88)"},
+		},
 	}
 
 	for _, tt := range testcase {
@@ -54,9 +58,11 @@ func TestCheckWaiting(t *testing.T) {
 			t.Errorf("Error: expected length %d, but got %d\n", len(tt.expectedWaiting), len(actualWaiting))
 		}
 
-		for idx, e := range tt.expectedWaiting {
-			if e != actualWaiting[idx] {
-				t.Errorf("Error: expected %v, but got %v\n", e, actualWaiting[idx])
+		if len(actualWaiting) != 0 { // check slice length before check elements
+			for idx, e := range tt.expectedWaiting {
+				if e != actualWaiting[idx] {
+					t.Errorf("Error: expected %v, but got %v\n", e, actualWaiting[idx])
+				}
 			}
 		}
 	}
