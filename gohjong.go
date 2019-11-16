@@ -140,7 +140,7 @@ func CheckWaiting(hand string) ([]string, error) {
 		}
 	}
 
-	// check toitsu shuntsu shuntsu shuntsu
+	// check toitsu shuntsu shuntsu shuntsu kotsu
 	for i := 0; i <= 9; i++ {
 		resthand := ""
 
@@ -165,6 +165,43 @@ func CheckWaiting(hand string) ([]string, error) {
 
 									if !contains(output, out) {
 										output = append(output, out)
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// check toitsu shuntsu shuntsu shuntsu shuntsu
+	for i := 0; i <= 9; i++ {
+		resthand := ""
+
+		resthand, toitsu := checkToitsu(hand, i)
+		for j := 1; j <= 7; j++ {
+			resthand, shuntsu1 := checkShuntsu(resthand, j)
+			if shuntsu1 != "" {
+				for k := j; k <= 7; k++ {
+					resthand, shuntsu2 := checkShuntsu(resthand, k)
+					if shuntsu2 != "" {
+						for l := k; l <= 7; l++ {
+							resthand, shuntsu3 := checkShuntsu(resthand, l)
+							if shuntsu3 != "" {
+								for m := l; m <= 7; m++ {
+									resthand, shuntsu4 := checkShuntsu(resthand, m)
+									if checkTenpai(resthand) {
+										out := ""
+										if toitsu == "" {
+											out = strings.Join([]string{shuntsu1, shuntsu2, shuntsu3, shuntsu4, "(" + resthand + ")"}, ",")
+										} else {
+											out = strings.Join([]string{shuntsu1, shuntsu2, shuntsu3, toitsu, "(" + resthand + ")"}, ",")
+										}
+
+										if !contains(output, out) {
+											output = append(output, out)
+										}
 									}
 								}
 							}
