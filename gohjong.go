@@ -2,7 +2,6 @@ package gohjong
 
 import (
 	"errors"
-	_ "fmt"
 	"strconv"
 	"strings"
 )
@@ -68,10 +67,18 @@ func CheckWaiting(hand string) ([]string, error) {
 		resthand, kotsu1 := checkKotsu(resthand)
 		resthand, kotsu2 := checkKotsu(resthand)
 		resthand, kotsu3 := checkKotsu(resthand)
-		resthand, _ = checkKotsu(resthand)
+		resthand, kotsu4 := checkKotsu(resthand)
 		if checkTenpai(resthand) {
-			out := strings.Join([]string{kotsu1, kotsu2, kotsu3, toitsu, "(" + resthand + ")"}, ",")
-			output = append(output, out)
+			out := ""
+			if toitsu == "" {
+				out = strings.Join([]string{kotsu1, kotsu2, kotsu3, kotsu4, "(" + resthand + ")"}, ",")
+			} else {
+				out = strings.Join([]string{kotsu1, kotsu2, kotsu3, toitsu, "(" + resthand + ")"}, ",")
+			}
+
+			if !contains(output, out) {
+				output = append(output, out)
+			}
 		}
 	}
 
@@ -93,7 +100,10 @@ func CheckWaiting(hand string) ([]string, error) {
 					} else {
 						out = strings.Join([]string{shuntsu, kotsu1, kotsu2, toitsu, "(" + resthand + ")"}, ",")
 					}
-					output = append(output, out)
+
+					if !contains(output, out) {
+						output = append(output, out)
+					}
 				}
 			}
 		}
@@ -111,7 +121,7 @@ func checkTenpai(resthand string) bool {
 		r1, _ := strconv.Atoi(string(resthand[0]))
 		r2, _ := strconv.Atoi(string(resthand[1]))
 
-		if r2-r1 <= 2 {
+		if r2-r1 < 2 {
 			return true
 		}
 	}
@@ -159,4 +169,13 @@ func checkKotsu(hand string) (string, string) {
 	}
 
 	return hand, ""
+}
+
+func contains(ol []string, o string) bool {
+	for _, oo := range ol {
+		if oo == o {
+			return true
+		}
+	}
+	return false
 }
