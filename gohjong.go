@@ -109,6 +109,72 @@ func CheckWaiting(hand string) ([]string, error) {
 		}
 	}
 
+	// check toitsu shuntsu shuntsu kotsu kotsu
+	for i := 0; i <= 9; i++ {
+		resthand := ""
+
+		resthand, toitsu := checkToitsu(hand, i)
+		for j := 1; j <= 7; j++ {
+			resthand, shuntsu1 := checkShuntsu(resthand, j)
+			if shuntsu1 != "" {
+				for k := j; k <= 7; k++ {
+					resthand, shuntsu2 := checkShuntsu(resthand, k)
+					if shuntsu2 != "" {
+						resthand, kotsu1 := checkKotsu(resthand)
+						resthand, kotsu2 := checkKotsu(resthand)
+						if checkTenpai(resthand) {
+							out := ""
+							if toitsu == "" {
+								out = strings.Join([]string{shuntsu1, shuntsu2, kotsu1, kotsu2, "(" + resthand + ")"}, ",")
+							} else {
+								out = strings.Join([]string{shuntsu1, shuntsu2, kotsu1, toitsu, "(" + resthand + ")"}, ",")
+							}
+
+							if !contains(output, out) {
+								output = append(output, out)
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// check toitsu shuntsu shuntsu shuntsu
+	for i := 0; i <= 9; i++ {
+		resthand := ""
+
+		resthand, toitsu := checkToitsu(hand, i)
+		for j := 1; j <= 7; j++ {
+			resthand, shuntsu1 := checkShuntsu(resthand, j)
+			if shuntsu1 != "" {
+				for k := j; k <= 7; k++ {
+					resthand, shuntsu2 := checkShuntsu(resthand, k)
+					if shuntsu2 != "" {
+						for l := k; l <= 7; l++ {
+							resthand, shuntsu3 := checkShuntsu(resthand, l)
+							if shuntsu3 != "" {
+								resthand, kotsu1 := checkKotsu(resthand)
+								if checkTenpai(resthand) {
+									out := ""
+									if toitsu == "" {
+										out = strings.Join([]string{shuntsu1, shuntsu2, shuntsu3, kotsu1, "(" + resthand + ")"}, ",")
+									} else {
+										out = strings.Join([]string{shuntsu1, shuntsu2, shuntsu3, toitsu, "(" + resthand + ")"}, ",")
+									}
+
+									if !contains(output, out) {
+										output = append(output, out)
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	return output, nil
 }
 
