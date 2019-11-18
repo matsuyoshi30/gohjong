@@ -11,7 +11,10 @@ func TestParseHand(t *testing.T) {
 	}{
 		{"", []Tile{}},
 		{"111", []Tile{}},
-		{"111m", []Tile{Tile{"1m"}, Tile{"1m"}, Tile{"1m"}}},
+		{"111m", []Tile{
+			Tile{name: "1m", tiletype: SuitTile, num: 1},
+			Tile{name: "1m", tiletype: SuitTile, num: 1},
+			Tile{name: "1m", tiletype: SuitTile, num: 1}}},
 		{"m", nil},
 	}
 
@@ -32,38 +35,16 @@ func TestParseHand(t *testing.T) {
 func TestCheckWaiting(t *testing.T) {
 	testcase := []struct {
 		input           string
-		expectedWaiting []string
+		expectedWaiting []Tile
 	}{
 		{
-			"1112224588899",
-			[]string{"111,222,888,99,(45)"},
-		},
-		{
-			"1112223355566",
-			[]string{"111,222,555,33,(66)", "111,222,555,66,(33)", "123,123,555,66,(12)"},
-		},
-		{
-			"1113335557779",
-			[]string{"111,333,555,777,(9)"},
-		},
-		{
-			"1235556668899",
-			[]string{"123,555,666,88,(99)", "123,555,666,99,(88)"},
-		},
-		{
-			"1122336667899",
-			[]string{"123,123,666,99,(78)", "123,123,789,666,(9)", "123,123,678,66,(99)", "123,123,678,99,(66)"},
-		},
-		{
-			"1112345678999", // Nine gates
-			[]string{"123,456,789,11,(99)", "123,456,789,99,(11)", "123,456,999,11,(78)", "123,678,999,11,(45)",
-				"234,567,111,99,(89)", "234,567,111,999,(8)", "234,678,111,999,(5)", "345,678,999,11,(12)",
-				"345,678,111,999,(2)", "234,789,111,99,(56)", "456,789,111,99,(23)"},
+			"1112224588899m",
+			[]Tile{Tile{"4m", SuitTile, 4}, Tile{"5m", SuitTile, 5}},
 		},
 	}
 
 	for _, tt := range testcase {
-		actualWaiting, err := CheckWaiting(tt.input)
+		_, actualWaiting, err := CheckWaiting(tt.input)
 		if err != nil {
 			t.Errorf("Error: %v\n", err)
 		}
@@ -89,7 +70,7 @@ func TestCheckWaiting(t *testing.T) {
 	}
 }
 
-func testContain(sl []string, s string) bool {
+func testContain(sl []Tile, s Tile) bool {
 	for _, ss := range sl {
 		if ss == s {
 			return true

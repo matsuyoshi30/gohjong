@@ -3,18 +3,27 @@ package gohjong
 import (
 	"errors"
 	"strconv"
-	"strings"
+)
+
+type TileType int
+
+const (
+	SuitTile        TileType = iota // 数牌
+	WindTile                        // 風牌
+	ThreeDragonTile                 // 三元牌
 )
 
 type Tile struct {
-	name string
+	name     string
+	tiletype TileType
+	num      int // if tiletype is suittile, 1 to 9
 }
 
 // ParseHand parse hand to tile slice
 func ParseHand(hand string) ([]Tile, error) {
 	res := make([]Tile, 0)
 
-	pool := make([]uint8, 0)
+	pool := make([]int, 0)
 	for i := 0; i < len(hand); i++ {
 		handstr := string(hand[i])
 		_, err := strconv.Atoi(handstr)
@@ -25,10 +34,10 @@ func ParseHand(hand string) ([]Tile, error) {
 				}
 
 				for _, p := range pool {
-					res = append(res, Tile{name: string(p) + handstr})
+					res = append(res, Tile{name: strconv.Itoa(p) + handstr, tiletype: SuitTile, num: p})
 				}
 
-				pool = make([]uint8, 0)
+				pool = make([]int, 0)
 			} else { // len(pool) == 0 => must be E, S, W, N, D, H, T
 				if handstr != "E" && handstr != "S" && handstr != "W" && handstr != "N" &&
 					handstr != "D" && handstr != "H" && handstr != "T" {
@@ -37,7 +46,11 @@ func ParseHand(hand string) ([]Tile, error) {
 				res = append(res, Tile{name: handstr})
 			}
 		} else { // num
-			pool = append(pool, hand[i])
+			i, err := strconv.Atoi(string(hand[i]))
+			if err != nil {
+				return nil, err
+			}
+			pool = append(pool, i)
 		}
 	}
 
@@ -50,60 +63,59 @@ func ParseHand(hand string) ([]Tile, error) {
 
 // CheckWaiting check waiting tiles
 // returns mentsu, machi, and error
-func CheckWaiting(hand string) ([]string, error) {
-	output := make([]string, 0)
-	// TODO
-	// _, err := ParseHand(hand)
-	// if err != nil {
-	// 	return nil, nil, err
-	// }
+func CheckWaiting(hand string) ([]Tile, []Tile, error) {
+	handTile, err := ParseHand(hand)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	output := make([]Tile, 0)
+	waiting := make([]Tile, 0)
 
 	// check waiting
 	// check toistu kotsu kotsu kotsu kotsu
 	for i := 0; i <= 9; i++ {
-		resthand := ""
+		var resthand []Tile
 
-		resthand, toitsu := checkToitsu(hand, i)
+		resthand, toitsu := checkToitsu(handTile, i)
 		resthand, kotsu1 := checkKotsu(resthand)
 		resthand, kotsu2 := checkKotsu(resthand)
 		resthand, kotsu3 := checkKotsu(resthand)
 		resthand, kotsu4 := checkKotsu(resthand)
 		if checkTenpai(resthand) {
-			out := ""
-			if toitsu == "" {
-				out = strings.Join([]string{kotsu1, kotsu2, kotsu3, kotsu4, "(" + resthand + ")"}, ",")
+			output = appendTile(output, kotsu1)
+			output = appendTile(output, kotsu2)
+			output = appendTile(output, kotsu3)
+			if len(resthand) == 1 {
+				output = appendTile(output, kotsu4)
 			} else {
-				out = strings.Join([]string{kotsu1, kotsu2, kotsu3, toitsu, "(" + resthand + ")"}, ",")
+				output = appendTile(output, toitsu)
 			}
-
-			if !contains(output, out) {
-				output = append(output, out)
-			}
+			waiting = appendTile(waiting, resthand)
 		}
 	}
 
 	// check toitsu shuntsu kotsu kotsu kotsu
 	for i := 0; i <= 9; i++ {
-		resthand := ""
+		var resthand []Tile
 
-		resthand, toitsu := checkToitsu(hand, i)
+		resthand, toitsu := checkToitsu(handTile, i)
 		for j := 1; j <= 7; j++ {
 			resthand, shuntsu := checkShuntsu(resthand, j)
-			if shuntsu != "" {
+			if shuntsu != nil {
 				resthand, kotsu1 := checkKotsu(resthand)
 				resthand, kotsu2 := checkKotsu(resthand)
 				resthand, kotsu3 := checkKotsu(resthand)
 				if checkTenpai(resthand) {
-					out := ""
-					if toitsu == "" {
-						out = strings.Join([]string{shuntsu, kotsu1, kotsu2, kotsu3, "(" + resthand + ")"}, ",")
+					output = appendTile(output, shuntsu)
+					output = appendTile(output, kotsu1)
+					output = appendTile(output, kotsu2)
+					if len(resthand) == 1 {
+						output = appendTile(output, kotsu3)
 					} else {
-						out = strings.Join([]string{shuntsu, kotsu1, kotsu2, toitsu, "(" + resthand + ")"}, ",")
+						output = appendTile(output, toitsu)
 					}
-
-					if !contains(output, out) {
-						output = append(output, out)
-					}
+					waiting = appendTile(waiting, resthand)
 				}
 			}
 		}
@@ -111,28 +123,27 @@ func CheckWaiting(hand string) ([]string, error) {
 
 	// check toitsu shuntsu shuntsu kotsu kotsu
 	for i := 0; i <= 9; i++ {
-		resthand := ""
+		var resthand []Tile
 
-		resthand, toitsu := checkToitsu(hand, i)
+		resthand, toitsu := checkToitsu(handTile, i)
 		for j := 1; j <= 7; j++ {
 			resthand, shuntsu1 := checkShuntsu(resthand, j)
-			if shuntsu1 != "" {
+			if shuntsu1 != nil {
 				for k := j; k <= 7; k++ {
 					resthand, shuntsu2 := checkShuntsu(resthand, k)
-					if shuntsu2 != "" {
+					if shuntsu2 != nil {
 						resthand, kotsu1 := checkKotsu(resthand)
 						resthand, kotsu2 := checkKotsu(resthand)
 						if checkTenpai(resthand) {
-							out := ""
-							if toitsu == "" {
-								out = strings.Join([]string{shuntsu1, shuntsu2, kotsu1, kotsu2, "(" + resthand + ")"}, ",")
+							output = appendTile(output, shuntsu1)
+							output = appendTile(output, shuntsu2)
+							output = appendTile(output, kotsu1)
+							if len(resthand) == 1 {
+								output = appendTile(output, kotsu2)
 							} else {
-								out = strings.Join([]string{shuntsu1, shuntsu2, kotsu1, toitsu, "(" + resthand + ")"}, ",")
+								output = appendTile(output, toitsu)
 							}
-
-							if !contains(output, out) {
-								output = append(output, out)
-							}
+							waiting = appendTile(waiting, resthand)
 						}
 					}
 				}
@@ -142,30 +153,29 @@ func CheckWaiting(hand string) ([]string, error) {
 
 	// check toitsu shuntsu shuntsu shuntsu kotsu
 	for i := 0; i <= 9; i++ {
-		resthand := ""
+		var resthand []Tile
 
-		resthand, toitsu := checkToitsu(hand, i)
+		resthand, toitsu := checkToitsu(handTile, i)
 		for j := 1; j <= 7; j++ {
 			resthand, shuntsu1 := checkShuntsu(resthand, j)
-			if shuntsu1 != "" {
+			if shuntsu1 != nil {
 				for k := j; k <= 7; k++ {
 					resthand, shuntsu2 := checkShuntsu(resthand, k)
-					if shuntsu2 != "" {
+					if shuntsu2 != nil {
 						for l := k; l <= 7; l++ {
 							resthand, shuntsu3 := checkShuntsu(resthand, l)
-							if shuntsu3 != "" {
-								resthand, kotsu1 := checkKotsu(resthand)
+							if shuntsu3 != nil {
+								resthand, kotsu := checkKotsu(resthand)
 								if checkTenpai(resthand) {
-									out := ""
-									if toitsu == "" {
-										out = strings.Join([]string{shuntsu1, shuntsu2, shuntsu3, kotsu1, "(" + resthand + ")"}, ",")
+									output = appendTile(output, shuntsu1)
+									output = appendTile(output, shuntsu2)
+									output = appendTile(output, shuntsu3)
+									if len(resthand) == 1 {
+										output = appendTile(output, kotsu)
 									} else {
-										out = strings.Join([]string{shuntsu1, shuntsu2, shuntsu3, toitsu, "(" + resthand + ")"}, ",")
+										output = appendTile(output, toitsu)
 									}
-
-									if !contains(output, out) {
-										output = append(output, out)
-									}
+									waiting = appendTile(waiting, resthand)
 								}
 							}
 						}
@@ -177,31 +187,30 @@ func CheckWaiting(hand string) ([]string, error) {
 
 	// check toitsu shuntsu shuntsu shuntsu shuntsu
 	for i := 0; i <= 9; i++ {
-		resthand := ""
+		var resthand []Tile
 
-		resthand, toitsu := checkToitsu(hand, i)
+		resthand, toitsu := checkToitsu(handTile, i)
 		for j := 1; j <= 7; j++ {
 			resthand, shuntsu1 := checkShuntsu(resthand, j)
-			if shuntsu1 != "" {
+			if shuntsu1 != nil {
 				for k := j; k <= 7; k++ {
 					resthand, shuntsu2 := checkShuntsu(resthand, k)
-					if shuntsu2 != "" {
+					if shuntsu2 != nil {
 						for l := k; l <= 7; l++ {
 							resthand, shuntsu3 := checkShuntsu(resthand, l)
-							if shuntsu3 != "" {
+							if shuntsu3 != nil {
 								for m := l; m <= 7; m++ {
 									resthand, shuntsu4 := checkShuntsu(resthand, m)
 									if checkTenpai(resthand) {
-										out := ""
-										if toitsu == "" {
-											out = strings.Join([]string{shuntsu1, shuntsu2, shuntsu3, shuntsu4, "(" + resthand + ")"}, ",")
+										output = appendTile(output, shuntsu1)
+										output = appendTile(output, shuntsu2)
+										output = appendTile(output, shuntsu3)
+										if len(resthand) == 1 {
+											output = appendTile(output, shuntsu4)
 										} else {
-											out = strings.Join([]string{shuntsu1, shuntsu2, shuntsu3, toitsu, "(" + resthand + ")"}, ",")
+											output = appendTile(output, toitsu)
 										}
-
-										if !contains(output, out) {
-											output = append(output, out)
-										}
+										waiting = appendTile(waiting, resthand)
 									}
 								}
 							}
@@ -212,19 +221,20 @@ func CheckWaiting(hand string) ([]string, error) {
 		}
 	}
 
-	return output, nil
+	return output, waiting, nil
 }
 
-func checkTenpai(resthand string) bool {
+func checkTenpai(resthand []Tile) bool {
 	if len(resthand) == 1 {
 		return true
 	}
 
 	if len(resthand) == 2 {
-		r1, _ := strconv.Atoi(string(resthand[0]))
-		r2, _ := strconv.Atoi(string(resthand[1]))
+		if resthand[0].tiletype != SuitTile || resthand[1].tiletype != SuitTile {
+			return false
+		}
 
-		if r2-r1 < 2 {
+		if resthand[1].num-resthand[0].num < 2 {
 			return true
 		}
 	}
@@ -233,48 +243,102 @@ func checkTenpai(resthand string) bool {
 }
 
 // checkToitsu whether hand has toitsu pairng n like 11
-func checkToitsu(hand string, n int) (string, string) {
-	tl := []string{"11", "22", "33", "44", "55", "66", "77", "88", "99", "00"}
-	toitsu := tl[n]
+func checkToitsu(hand []Tile, n int) ([]Tile, []Tile) {
+	var toitsu []Tile
 
-	handstr := strings.Join(strings.Split(hand, toitsu), "")
-	if len(handstr) == len(hand) {
-		toitsu = ""
+	for i := 0; i < len(hand)-1; i++ {
+		h1 := hand[i]
+		h2 := hand[i+1]
+		if h1.num == n && h2.num == n {
+			toitsu = []Tile{h1, h2}
+			hand = remove(hand, h1)
+			hand = remove(hand, h2)
+			break
+		}
 	}
 
-	return handstr, toitsu
+	return hand, toitsu
 }
 
 // checkSHuntsu whether hand has shuntsu like 123
-func checkShuntsu(hand string, n int) (string, string) {
-	out := ""
-	n1 := strings.Index(hand, strconv.Itoa(n))
-	n2 := strings.Index(hand, strconv.Itoa(n+1))
-	n3 := strings.Index(hand, strconv.Itoa(n+2))
+func checkShuntsu(hand []Tile, n int) ([]Tile, []Tile) {
+	n1 := index(hand, n)
+	n2 := index(hand, n+1)
+	n3 := index(hand, n+2)
 
-	if n1 >= 0 && n2 >= 0 && n3 >= 0 {
-		out = strconv.Itoa(n) + strconv.Itoa(n+1) + strconv.Itoa(n+2)
-		hand = hand[0:n1] + hand[n1+1:n2] + hand[n2+1:n3] + hand[n3+1:]
+	var out []Tile
+	if n1.num != -1 && n2.num != -1 && n3.num != -1 {
+		out = []Tile{n1, n2, n3}
+		hand = remove(hand, n1)
+		hand = remove(hand, n2)
+		hand = remove(hand, n3)
 	}
 
 	return hand, out
 }
 
 // checkKotsu whether hand has kotsu like 111
-func checkKotsu(hand string) (string, string) {
-	kl := []string{"111", "222", "333", "444", "555", "666", "777", "888", "999"}
+func checkKotsu(hand []Tile) ([]Tile, []Tile) {
+	var kotsu []Tile
 
-	for _, k := range kl {
-		handstr := strings.Join(strings.Split(hand, k), "")
-		if len(handstr) != len(hand) {
-			return handstr, k
+	for i := 0; i <= 9; i++ {
+		for j := 0; j < len(hand)-2; j++ {
+			h1 := hand[j]
+			h2 := hand[j+1]
+			h3 := hand[j+2]
+			if h1.num == i && h2.num == i && h3.num == i {
+				kotsu = []Tile{h1, h2, h3}
+				hand = remove(hand, h1)
+				hand = remove(hand, h2)
+				hand = remove(hand, h3)
+				break
+			}
 		}
 	}
 
-	return hand, ""
+	return hand, kotsu
 }
 
-func contains(ol []string, o string) bool {
+func remove(pl []Tile, p Tile) []Tile {
+	ret := make([]Tile, 0)
+
+	i := 0
+	for i = 0; i < len(pl); i++ {
+		if pl[i] != p {
+			ret = append(ret, pl[i])
+		} else {
+			break
+		}
+	}
+
+	if i < len(pl) {
+		ret = appendTile(ret, pl[i+1:])
+	}
+
+	return ret
+}
+
+func index(pl []Tile, n int) Tile {
+	t := Tile{num: -1}
+
+	for _, p := range pl {
+		if p.num == n {
+			return p
+		}
+	}
+
+	return t
+}
+
+func appendTile(dest []Tile, source []Tile) []Tile {
+	for _, s := range source {
+		dest = append(dest, s)
+	}
+
+	return dest
+}
+
+func contains(ol []Tile, o Tile) bool {
 	for _, oo := range ol {
 		if oo == o {
 			return true
