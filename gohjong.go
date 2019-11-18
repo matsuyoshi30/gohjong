@@ -261,7 +261,7 @@ func checkTenpai(resthand []Tile) bool {
 			return false
 		}
 
-		if resthand[1].num-resthand[0].num < 2 {
+		if resthand[1].num-resthand[0].num <= 2 {
 			return true
 		}
 	}

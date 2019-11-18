@@ -50,6 +50,18 @@ func TestCheckWaiting(t *testing.T) {
 				},
 			},
 		},
+		{
+			"1112224688899m",
+			[]OutputHand{
+				OutputHand{
+					DefiniteHand: []Tile{Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1},
+						Tile{"2m", SuitTile, 2}, Tile{"2m", SuitTile, 2}, Tile{"2m", SuitTile, 2},
+						Tile{"8m", SuitTile, 8}, Tile{"8m", SuitTile, 8}, Tile{"8m", SuitTile, 8},
+						Tile{"9m", SuitTile, 9}, Tile{"9m", SuitTile, 9}},
+					WaitingHand: []Tile{Tile{"4m", SuitTile, 4}, Tile{"6m", SuitTile, 6}},
+				},
+			},
+		},
 	}
 
 	for _, tt := range testcase {
