@@ -13,10 +13,13 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-
-	h = "1235556667899"
-	sl, err := gohjong.CheckWaiting(h)
-	fmt.Println(sl)
-
 	fmt.Println(s)
+
+	h = "1235556667899m"
+	sl, err := gohjong.CheckWaiting(h)
+	for _, s := range sl {
+		fmt.Println("Definite", s.DefiniteHand)
+		fmt.Println("Waiting", s.WaitingHand)
+	}
+
 }

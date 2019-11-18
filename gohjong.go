@@ -61,20 +61,27 @@ func ParseHand(hand string) ([]Tile, error) {
 	return res, nil
 }
 
+type OutputHand struct {
+	DefiniteHand []Tile
+	WaitingHand  []Tile
+}
+
 // CheckWaiting check waiting tiles
 // returns mentsu, machi, and error
-func CheckWaiting(hand string) ([]Tile, []Tile, error) {
+func CheckWaiting(hand string) ([]OutputHand, error) {
 	handTile, err := ParseHand(hand)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	output := make([]Tile, 0)
-	waiting := make([]Tile, 0)
+	output := make([]OutputHand, 0)
 
 	// check waiting
 	// check toistu kotsu kotsu kotsu kotsu
 	for i := 0; i <= 9; i++ {
+		definite := make([]Tile, 0)
+		waiting := make([]Tile, 0)
+
 		var resthand []Tile
 
 		resthand, toitsu := checkToitsu(handTile, i)
@@ -83,20 +90,25 @@ func CheckWaiting(hand string) ([]Tile, []Tile, error) {
 		resthand, kotsu3 := checkKotsu(resthand)
 		resthand, kotsu4 := checkKotsu(resthand)
 		if checkTenpai(resthand) {
-			output = appendTile(output, kotsu1)
-			output = appendTile(output, kotsu2)
-			output = appendTile(output, kotsu3)
+			definite = appendTile(definite, kotsu1)
+			definite = appendTile(definite, kotsu2)
+			definite = appendTile(definite, kotsu3)
 			if len(resthand) == 1 {
-				output = appendTile(output, kotsu4)
+				definite = appendTile(definite, kotsu4)
 			} else {
-				output = appendTile(output, toitsu)
+				definite = appendTile(definite, toitsu)
 			}
 			waiting = appendTile(waiting, resthand)
+
+			output = append(output, OutputHand{definite, waiting})
 		}
 	}
 
 	// check toitsu shuntsu kotsu kotsu kotsu
 	for i := 0; i <= 9; i++ {
+		definite := make([]Tile, 0)
+		waiting := make([]Tile, 0)
+
 		var resthand []Tile
 
 		resthand, toitsu := checkToitsu(handTile, i)
@@ -107,15 +119,17 @@ func CheckWaiting(hand string) ([]Tile, []Tile, error) {
 				resthand, kotsu2 := checkKotsu(resthand)
 				resthand, kotsu3 := checkKotsu(resthand)
 				if checkTenpai(resthand) {
-					output = appendTile(output, shuntsu)
-					output = appendTile(output, kotsu1)
-					output = appendTile(output, kotsu2)
+					definite = appendTile(definite, shuntsu)
+					definite = appendTile(definite, kotsu1)
+					definite = appendTile(definite, kotsu2)
 					if len(resthand) == 1 {
-						output = appendTile(output, kotsu3)
+						definite = appendTile(definite, kotsu3)
 					} else {
-						output = appendTile(output, toitsu)
+						definite = appendTile(definite, toitsu)
 					}
 					waiting = appendTile(waiting, resthand)
+
+					output = append(output, OutputHand{definite, waiting})
 				}
 			}
 		}
@@ -123,6 +137,9 @@ func CheckWaiting(hand string) ([]Tile, []Tile, error) {
 
 	// check toitsu shuntsu shuntsu kotsu kotsu
 	for i := 0; i <= 9; i++ {
+		definite := make([]Tile, 0)
+		waiting := make([]Tile, 0)
+
 		var resthand []Tile
 
 		resthand, toitsu := checkToitsu(handTile, i)
@@ -135,15 +152,17 @@ func CheckWaiting(hand string) ([]Tile, []Tile, error) {
 						resthand, kotsu1 := checkKotsu(resthand)
 						resthand, kotsu2 := checkKotsu(resthand)
 						if checkTenpai(resthand) {
-							output = appendTile(output, shuntsu1)
-							output = appendTile(output, shuntsu2)
-							output = appendTile(output, kotsu1)
+							definite = appendTile(definite, shuntsu1)
+							definite = appendTile(definite, shuntsu2)
+							definite = appendTile(definite, kotsu1)
 							if len(resthand) == 1 {
-								output = appendTile(output, kotsu2)
+								definite = appendTile(definite, kotsu2)
 							} else {
-								output = appendTile(output, toitsu)
+								definite = appendTile(definite, toitsu)
 							}
 							waiting = appendTile(waiting, resthand)
+
+							output = append(output, OutputHand{definite, waiting})
 						}
 					}
 				}
@@ -153,6 +172,8 @@ func CheckWaiting(hand string) ([]Tile, []Tile, error) {
 
 	// check toitsu shuntsu shuntsu shuntsu kotsu
 	for i := 0; i <= 9; i++ {
+		definite := make([]Tile, 0)
+		waiting := make([]Tile, 0)
 		var resthand []Tile
 
 		resthand, toitsu := checkToitsu(handTile, i)
@@ -167,15 +188,17 @@ func CheckWaiting(hand string) ([]Tile, []Tile, error) {
 							if shuntsu3 != nil {
 								resthand, kotsu := checkKotsu(resthand)
 								if checkTenpai(resthand) {
-									output = appendTile(output, shuntsu1)
-									output = appendTile(output, shuntsu2)
-									output = appendTile(output, shuntsu3)
+									definite = appendTile(definite, shuntsu1)
+									definite = appendTile(definite, shuntsu2)
+									definite = appendTile(definite, shuntsu3)
 									if len(resthand) == 1 {
-										output = appendTile(output, kotsu)
+										definite = appendTile(definite, kotsu)
 									} else {
-										output = appendTile(output, toitsu)
+										definite = appendTile(definite, toitsu)
 									}
 									waiting = appendTile(waiting, resthand)
+
+									output = append(output, OutputHand{definite, waiting})
 								}
 							}
 						}
@@ -187,6 +210,8 @@ func CheckWaiting(hand string) ([]Tile, []Tile, error) {
 
 	// check toitsu shuntsu shuntsu shuntsu shuntsu
 	for i := 0; i <= 9; i++ {
+		definite := make([]Tile, 0)
+		waiting := make([]Tile, 0)
 		var resthand []Tile
 
 		resthand, toitsu := checkToitsu(handTile, i)
@@ -202,15 +227,17 @@ func CheckWaiting(hand string) ([]Tile, []Tile, error) {
 								for m := l; m <= 7; m++ {
 									resthand, shuntsu4 := checkShuntsu(resthand, m)
 									if checkTenpai(resthand) {
-										output = appendTile(output, shuntsu1)
-										output = appendTile(output, shuntsu2)
-										output = appendTile(output, shuntsu3)
+										definite = appendTile(definite, shuntsu1)
+										definite = appendTile(definite, shuntsu2)
+										definite = appendTile(definite, shuntsu3)
 										if len(resthand) == 1 {
-											output = appendTile(output, shuntsu4)
+											definite = appendTile(definite, shuntsu4)
 										} else {
-											output = appendTile(output, toitsu)
+											definite = appendTile(definite, toitsu)
 										}
 										waiting = appendTile(waiting, resthand)
+
+										output = append(output, OutputHand{definite, waiting})
 									}
 								}
 							}
@@ -221,7 +248,7 @@ func CheckWaiting(hand string) ([]Tile, []Tile, error) {
 		}
 	}
 
-	return output, waiting, nil
+	return output, nil
 }
 
 func checkTenpai(resthand []Tile) bool {
@@ -291,7 +318,7 @@ func checkKotsu(hand []Tile) ([]Tile, []Tile) {
 				hand = remove(hand, h1)
 				hand = remove(hand, h2)
 				hand = remove(hand, h3)
-				break
+				return hand, kotsu
 			}
 		}
 	}

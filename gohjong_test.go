@@ -1,6 +1,7 @@
 package gohjong
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -34,45 +35,61 @@ func TestParseHand(t *testing.T) {
 
 func TestCheckWaiting(t *testing.T) {
 	testcase := []struct {
-		input           string
-		expectedWaiting []Tile
+		input    string
+		expected []OutputHand
 	}{
 		{
 			"1112224588899m",
-			[]Tile{Tile{"4m", SuitTile, 4}, Tile{"5m", SuitTile, 5}},
+			[]OutputHand{
+				OutputHand{
+					DefiniteHand: []Tile{Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1},
+						Tile{"2m", SuitTile, 2}, Tile{"2m", SuitTile, 2}, Tile{"2m", SuitTile, 2},
+						Tile{"8m", SuitTile, 8}, Tile{"8m", SuitTile, 8}, Tile{"8m", SuitTile, 8},
+						Tile{"9m", SuitTile, 9}, Tile{"9m", SuitTile, 9}},
+					WaitingHand: []Tile{Tile{"4m", SuitTile, 4}, Tile{"5m", SuitTile, 5}},
+				},
+			},
 		},
 	}
 
 	for _, tt := range testcase {
-		_, actualWaiting, err := CheckWaiting(tt.input)
+		actualOutput, err := CheckWaiting(tt.input)
 		if err != nil {
 			t.Errorf("Error: %v\n", err)
 		}
 
-		if len(tt.expectedWaiting) != len(actualWaiting) {
-			t.Errorf("Error: expected length %d, but got %d\n", len(tt.expectedWaiting), len(actualWaiting))
+		if len(tt.expected) != len(actualOutput) {
+			t.Errorf("Error: expected length %d, but got %d\n", len(tt.expected), len(actualOutput))
 		}
 
-		if len(tt.expectedWaiting) != 0 { // check slice length before check elements
-			for _, e := range tt.expectedWaiting {
-				if !testContain(actualWaiting, e) {
-					t.Errorf("Error: expected %v, but does not\n", e)
-				}
+		if len(actualOutput) != 0 { // check slice length before check elements
+			if !reflect.DeepEqual(tt.expected, actualOutput) {
+				t.Errorf("Error: expected %v, but got %v\n", tt.expected, actualOutput)
 			}
-
-			for _, a := range actualWaiting {
-				if !testContain(tt.expectedWaiting, a) {
-					t.Errorf("Error: unexpected %v\n", a)
-				}
-			}
-
 		}
 	}
 }
 
-func testContain(sl []Tile, s Tile) bool {
+func testContain(sl []OutputHand, s OutputHand) bool {
 	for _, ss := range sl {
-		if ss == s {
+		for _, sd := range s.definiteHand {
+			if !testContainHand(ss.definiteHand, sd) {
+				return false
+			}
+		}
+		for _, sw := range s.waitingHand {
+			if !testContainHand(ss.waitingHand, sw) {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
+func testContainHand(hl []Tile, h Tile) bool {
+	for _, hh := range hl {
+		if hh == h {
 			return true
 		}
 	}
