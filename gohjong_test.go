@@ -72,13 +72,13 @@ func TestCheckWaiting(t *testing.T) {
 
 func testContain(sl []OutputHand, s OutputHand) bool {
 	for _, ss := range sl {
-		for _, sd := range s.definiteHand {
-			if !testContainHand(ss.definiteHand, sd) {
+		for _, sd := range s.DefiniteHand {
+			if !testContainHand(ss.DefiniteHand, sd) {
 				return false
 			}
 		}
-		for _, sw := range s.waitingHand {
-			if !testContainHand(ss.waitingHand, sw) {
+		for _, sw := range s.WaitingHand {
+			if !testContainHand(ss.WaitingHand, sw) {
 				return false
 			}
 		}

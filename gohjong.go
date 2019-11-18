@@ -364,12 +364,3 @@ func appendTile(dest []Tile, source []Tile) []Tile {
 
 	return dest
 }
-
-func contains(ol []Tile, o Tile) bool {
-	for _, oo := range ol {
-		if oo == o {
-			return true
-		}
-	}
-	return false
-}
