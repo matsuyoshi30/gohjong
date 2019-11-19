@@ -2,6 +2,7 @@ package gohjong
 
 import (
 	"errors"
+	"reflect"
 	"strconv"
 )
 
@@ -100,7 +101,10 @@ func CheckWaiting(hand string) ([]OutputHand, error) {
 			}
 			waiting = appendTile(waiting, resthand)
 
-			output = append(output, OutputHand{definite, waiting})
+			o := OutputHand{definite, waiting}
+			if !contain(output, o) {
+				output = append(output, o)
+			}
 		}
 	}
 
@@ -129,7 +133,10 @@ func CheckWaiting(hand string) ([]OutputHand, error) {
 					}
 					waiting = appendTile(waiting, resthand)
 
-					output = append(output, OutputHand{definite, waiting})
+					o := OutputHand{definite, waiting}
+					if !contain(output, o) {
+						output = append(output, o)
+					}
 				}
 			}
 		}
@@ -162,7 +169,10 @@ func CheckWaiting(hand string) ([]OutputHand, error) {
 							}
 							waiting = appendTile(waiting, resthand)
 
-							output = append(output, OutputHand{definite, waiting})
+							o := OutputHand{definite, waiting}
+							if !contain(output, o) {
+								output = append(output, o)
+							}
 						}
 					}
 				}
@@ -198,7 +208,10 @@ func CheckWaiting(hand string) ([]OutputHand, error) {
 									}
 									waiting = appendTile(waiting, resthand)
 
-									output = append(output, OutputHand{definite, waiting})
+									o := OutputHand{definite, waiting}
+									if !contain(output, o) {
+										output = append(output, o)
+									}
 								}
 							}
 						}
@@ -237,7 +250,10 @@ func CheckWaiting(hand string) ([]OutputHand, error) {
 										}
 										waiting = appendTile(waiting, resthand)
 
-										output = append(output, OutputHand{definite, waiting})
+										o := OutputHand{definite, waiting}
+										if !contain(output, o) {
+											output = append(output, o)
+										}
 									}
 								}
 							}
@@ -324,6 +340,16 @@ func checkKotsu(hand []Tile) ([]Tile, []Tile) {
 	}
 
 	return hand, kotsu
+}
+
+func contain(ol []OutputHand, o OutputHand) bool {
+	for _, oh := range ol {
+		if reflect.DeepEqual(oh, o) {
+			return true
+		}
+	}
+
+	return false
 }
 
 func remove(pl []Tile, p Tile) []Tile {

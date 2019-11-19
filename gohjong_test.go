@@ -62,6 +62,51 @@ func TestCheckWaiting(t *testing.T) {
 				},
 			},
 		},
+		{
+			"1112223355566m",
+			[]OutputHand{
+				OutputHand{
+					DefiniteHand: []Tile{Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1},
+						Tile{"2m", SuitTile, 2}, Tile{"2m", SuitTile, 2}, Tile{"2m", SuitTile, 2},
+						Tile{"5m", SuitTile, 5}, Tile{"5m", SuitTile, 5}, Tile{"5m", SuitTile, 5},
+						Tile{"3m", SuitTile, 3}, Tile{"3m", SuitTile, 3}},
+					WaitingHand: []Tile{Tile{"6m", SuitTile, 6}, Tile{"6m", SuitTile, 6}},
+				},
+				OutputHand{
+					DefiniteHand: []Tile{Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1},
+						Tile{"2m", SuitTile, 2}, Tile{"2m", SuitTile, 2}, Tile{"2m", SuitTile, 2},
+						Tile{"5m", SuitTile, 5}, Tile{"5m", SuitTile, 5}, Tile{"5m", SuitTile, 5},
+						Tile{"6m", SuitTile, 6}, Tile{"6m", SuitTile, 6}},
+					WaitingHand: []Tile{Tile{"3m", SuitTile, 3}, Tile{"3m", SuitTile, 3}},
+				},
+				OutputHand{
+					DefiniteHand: []Tile{Tile{"1m", SuitTile, 1}, Tile{"2m", SuitTile, 2}, Tile{"3m", SuitTile, 3},
+						Tile{"1m", SuitTile, 1}, Tile{"2m", SuitTile, 2}, Tile{"3m", SuitTile, 3},
+						Tile{"5m", SuitTile, 5}, Tile{"5m", SuitTile, 5}, Tile{"5m", SuitTile, 5},
+						Tile{"6m", SuitTile, 6}, Tile{"6m", SuitTile, 6}},
+					WaitingHand: []Tile{Tile{"1m", SuitTile, 1}, Tile{"2m", SuitTile, 2}},
+				},
+			},
+		},
+		{
+			"1113335557779m",
+			[]OutputHand{
+				OutputHand{
+					DefiniteHand: []Tile{Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1},
+						Tile{"3m", SuitTile, 3}, Tile{"3m", SuitTile, 3}, Tile{"3m", SuitTile, 3},
+						Tile{"5m", SuitTile, 5}, Tile{"5m", SuitTile, 5}, Tile{"5m", SuitTile, 5},
+						Tile{"7m", SuitTile, 7}, Tile{"7m", SuitTile, 7}, Tile{"7m", SuitTile, 7}},
+					WaitingHand: []Tile{Tile{"9m", SuitTile, 9}},
+				},
+				OutputHand{
+					DefiniteHand: []Tile{Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1},
+						Tile{"3m", SuitTile, 3}, Tile{"3m", SuitTile, 3}, Tile{"3m", SuitTile, 3},
+						Tile{"5m", SuitTile, 5}, Tile{"5m", SuitTile, 5}, Tile{"5m", SuitTile, 5},
+						Tile{"7m", SuitTile, 7}, Tile{"7m", SuitTile, 7}},
+					WaitingHand: []Tile{Tile{"7m", SuitTile, 7}, Tile{"9m", SuitTile, 9}},
+				},
+			},
+		},
 	}
 
 	for _, tt := range testcase {
