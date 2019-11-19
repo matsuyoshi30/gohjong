@@ -1,4 +1,7 @@
 version: 2.1
+general:
+  artifacts:
+    - "coverage.out"
 jobs:
   build:
     docker:
@@ -8,6 +11,14 @@ jobs:
     working_directory: /go/src/github.com/matsuyoshi30/gohjong
     steps:
       - checkout
-      # specify any bash command here prefixed with `run: `
-      - run: go get -v -t -d ./...
-      - run: go test -v
+      - run: go get -u golang.org/x/lint/golint github.com/haya14busa/goverage
+      - run: golint ./...
+      - run: go vet ./...
+      - run: goverage -v -coverprofile=coverage.out ./...
+      - run: go tool cover -html coverage.out -o coverage.html
+      - store_artifacts:
+          path: coverage.out
+          destination: coverage.out
+      - store_artifacts:
+          path: coverage.html
+          destination: coverage.html     - run: go get -v -t -d ./...
