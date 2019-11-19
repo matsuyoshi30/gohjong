@@ -126,30 +126,3 @@ func TestCheckWaiting(t *testing.T) {
 		}
 	}
 }
-
-func testContain(sl []OutputHand, s OutputHand) bool {
-	for _, ss := range sl {
-		for _, sd := range s.DefiniteHand {
-			if !testContainHand(ss.DefiniteHand, sd) {
-				return false
-			}
-		}
-		for _, sw := range s.WaitingHand {
-			if !testContainHand(ss.WaitingHand, sw) {
-				return false
-			}
-		}
-	}
-
-	return true
-}
-
-func testContainHand(hl []Tile, h Tile) bool {
-	for _, hh := range hl {
-		if hh == h {
-			return true
-		}
-	}
-
-	return false
-}
