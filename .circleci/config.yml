@@ -21,4 +21,4 @@ jobs:
           destination: coverage.out
       - store_artifacts:
           path: coverage.html
-          destination: coverage.html     - run: go get -v -t -d ./...
+          destination: coverage.html
