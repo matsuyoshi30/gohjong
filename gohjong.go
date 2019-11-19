@@ -81,9 +81,7 @@ func CheckWaiting(hand string) ([]OutputHand, error) {
 	// check toistu kotsu kotsu kotsu kotsu
 	for i := 0; i <= 9; i++ {
 		definite := make([]Tile, 0)
-		waiting := make([]Tile, 0)
-
-		var resthand []Tile
+		resthand := make([]Tile, 0)
 
 		resthand, toitsu := checkToitsu(handTile, i)
 		resthand, kotsu1 := checkKotsu(resthand)
@@ -99,21 +97,19 @@ func CheckWaiting(hand string) ([]OutputHand, error) {
 			} else {
 				definite = appendTile(definite, toitsu)
 			}
-			waiting = appendTile(waiting, resthand)
 
-			o := OutputHand{definite, waiting}
+			o := OutputHand{definite, resthand}
 			if !contain(output, o) {
 				output = append(output, o)
 			}
+			definite = nil
 		}
 	}
 
 	// check toitsu shuntsu kotsu kotsu kotsu
 	for i := 0; i <= 9; i++ {
 		definite := make([]Tile, 0)
-		waiting := make([]Tile, 0)
-
-		var resthand []Tile
+		resthand := make([]Tile, 0)
 
 		resthand, toitsu := checkToitsu(handTile, i)
 		for j := 1; j <= 7; j++ {
@@ -131,12 +127,12 @@ func CheckWaiting(hand string) ([]OutputHand, error) {
 					} else {
 						definite = appendTile(definite, toitsu)
 					}
-					waiting = appendTile(waiting, resthand)
 
-					o := OutputHand{definite, waiting}
+					o := OutputHand{definite, resthand}
 					if !contain(output, o) {
 						output = append(output, o)
 					}
+					definite = nil
 				}
 			}
 		}
@@ -145,9 +141,7 @@ func CheckWaiting(hand string) ([]OutputHand, error) {
 	// check toitsu shuntsu shuntsu kotsu kotsu
 	for i := 0; i <= 9; i++ {
 		definite := make([]Tile, 0)
-		waiting := make([]Tile, 0)
-
-		var resthand []Tile
+		resthand := make([]Tile, 0)
 
 		resthand, toitsu := checkToitsu(handTile, i)
 		for j := 1; j <= 7; j++ {
@@ -167,12 +161,12 @@ func CheckWaiting(hand string) ([]OutputHand, error) {
 							} else {
 								definite = appendTile(definite, toitsu)
 							}
-							waiting = appendTile(waiting, resthand)
 
-							o := OutputHand{definite, waiting}
+							o := OutputHand{definite, resthand}
 							if !contain(output, o) {
 								output = append(output, o)
 							}
+							definite = nil
 						}
 					}
 				}
@@ -183,8 +177,7 @@ func CheckWaiting(hand string) ([]OutputHand, error) {
 	// check toitsu shuntsu shuntsu shuntsu kotsu
 	for i := 0; i <= 9; i++ {
 		definite := make([]Tile, 0)
-		waiting := make([]Tile, 0)
-		var resthand []Tile
+		resthand := make([]Tile, 0)
 
 		resthand, toitsu := checkToitsu(handTile, i)
 		for j := 1; j <= 7; j++ {
@@ -206,12 +199,12 @@ func CheckWaiting(hand string) ([]OutputHand, error) {
 									} else {
 										definite = appendTile(definite, toitsu)
 									}
-									waiting = appendTile(waiting, resthand)
 
-									o := OutputHand{definite, waiting}
+									o := OutputHand{definite, resthand}
 									if !contain(output, o) {
 										output = append(output, o)
 									}
+									definite = nil
 								}
 							}
 						}
@@ -224,8 +217,7 @@ func CheckWaiting(hand string) ([]OutputHand, error) {
 	// check toitsu shuntsu shuntsu shuntsu shuntsu
 	for i := 0; i <= 9; i++ {
 		definite := make([]Tile, 0)
-		waiting := make([]Tile, 0)
-		var resthand []Tile
+		resthand := make([]Tile, 0)
 
 		resthand, toitsu := checkToitsu(handTile, i)
 		for j := 1; j <= 7; j++ {
@@ -248,12 +240,12 @@ func CheckWaiting(hand string) ([]OutputHand, error) {
 										} else {
 											definite = appendTile(definite, toitsu)
 										}
-										waiting = appendTile(waiting, resthand)
 
-										o := OutputHand{definite, waiting}
+										o := OutputHand{definite, resthand}
 										if !contain(output, o) {
 											output = append(output, o)
 										}
+										definite = nil
 									}
 								}
 							}

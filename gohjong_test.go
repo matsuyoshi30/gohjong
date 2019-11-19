@@ -107,6 +107,88 @@ func TestCheckWaiting(t *testing.T) {
 				},
 			},
 		},
+		{
+			"1112345678999m",
+			[]OutputHand{
+				OutputHand{
+					DefiniteHand: []Tile{Tile{"2m", SuitTile, 2}, Tile{"3m", SuitTile, 3}, Tile{"4m", SuitTile, 4},
+						Tile{"5m", SuitTile, 5}, Tile{"6m", SuitTile, 6}, Tile{"7m", SuitTile, 7},
+						Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1},
+						Tile{"9m", SuitTile, 9}, Tile{"9m", SuitTile, 9}, Tile{"9m", SuitTile, 9}},
+					WaitingHand: []Tile{Tile{"8m", SuitTile, 8}},
+				},
+				OutputHand{
+					DefiniteHand: []Tile{Tile{"2m", SuitTile, 2}, Tile{"3m", SuitTile, 3}, Tile{"4m", SuitTile, 4},
+						Tile{"6m", SuitTile, 6}, Tile{"7m", SuitTile, 7}, Tile{"8m", SuitTile, 8},
+						Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1},
+						Tile{"9m", SuitTile, 9}, Tile{"9m", SuitTile, 9}, Tile{"9m", SuitTile, 9}},
+					WaitingHand: []Tile{Tile{"5m", SuitTile, 5}},
+				},
+				OutputHand{
+					DefiniteHand: []Tile{Tile{"3m", SuitTile, 3}, Tile{"4m", SuitTile, 4}, Tile{"5m", SuitTile, 5},
+						Tile{"6m", SuitTile, 6}, Tile{"7m", SuitTile, 7}, Tile{"8m", SuitTile, 8},
+						Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1},
+						Tile{"9m", SuitTile, 9}, Tile{"9m", SuitTile, 9}, Tile{"9m", SuitTile, 9}},
+					WaitingHand: []Tile{Tile{"2m", SuitTile, 2}},
+				},
+				OutputHand{
+					DefiniteHand: []Tile{Tile{"1m", SuitTile, 1}, Tile{"2m", SuitTile, 2}, Tile{"3m", SuitTile, 3},
+						Tile{"4m", SuitTile, 4}, Tile{"5m", SuitTile, 5}, Tile{"6m", SuitTile, 6},
+						Tile{"9m", SuitTile, 9}, Tile{"9m", SuitTile, 9}, Tile{"9m", SuitTile, 9},
+						Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1}},
+					WaitingHand: []Tile{Tile{"7m", SuitTile, 7}, Tile{"8m", SuitTile, 8}},
+				},
+				OutputHand{
+					DefiniteHand: []Tile{Tile{"1m", SuitTile, 1}, Tile{"2m", SuitTile, 2}, Tile{"3m", SuitTile, 3},
+						Tile{"6m", SuitTile, 6}, Tile{"7m", SuitTile, 7}, Tile{"8m", SuitTile, 8},
+						Tile{"9m", SuitTile, 9}, Tile{"9m", SuitTile, 9}, Tile{"9m", SuitTile, 9},
+						Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1}},
+					WaitingHand: []Tile{Tile{"4m", SuitTile, 4}, Tile{"5m", SuitTile, 5}},
+				},
+				OutputHand{
+					DefiniteHand: []Tile{Tile{"3m", SuitTile, 3}, Tile{"4m", SuitTile, 4}, Tile{"5m", SuitTile, 5},
+						Tile{"6m", SuitTile, 6}, Tile{"7m", SuitTile, 7}, Tile{"8m", SuitTile, 8},
+						Tile{"9m", SuitTile, 9}, Tile{"9m", SuitTile, 9}, Tile{"9m", SuitTile, 9},
+						Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1}},
+					WaitingHand: []Tile{Tile{"1m", SuitTile, 1}, Tile{"2m", SuitTile, 2}},
+				},
+				OutputHand{
+					DefiniteHand: []Tile{Tile{"2m", SuitTile, 2}, Tile{"3m", SuitTile, 3}, Tile{"4m", SuitTile, 4},
+						Tile{"5m", SuitTile, 5}, Tile{"6m", SuitTile, 6}, Tile{"7m", SuitTile, 7},
+						Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1},
+						Tile{"9m", SuitTile, 9}, Tile{"9m", SuitTile, 9}},
+					WaitingHand: []Tile{Tile{"8m", SuitTile, 8}, Tile{"9m", SuitTile, 9}},
+				},
+				OutputHand{
+					DefiniteHand: []Tile{Tile{"2m", SuitTile, 2}, Tile{"3m", SuitTile, 3}, Tile{"4m", SuitTile, 4},
+						Tile{"7m", SuitTile, 7}, Tile{"8m", SuitTile, 8}, Tile{"9m", SuitTile, 9},
+						Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1},
+						Tile{"9m", SuitTile, 9}, Tile{"9m", SuitTile, 9}},
+					WaitingHand: []Tile{Tile{"5m", SuitTile, 5}, Tile{"6m", SuitTile, 6}},
+				},
+				OutputHand{
+					DefiniteHand: []Tile{Tile{"4m", SuitTile, 4}, Tile{"5m", SuitTile, 5}, Tile{"6m", SuitTile, 6},
+						Tile{"7m", SuitTile, 7}, Tile{"8m", SuitTile, 8}, Tile{"9m", SuitTile, 9},
+						Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1},
+						Tile{"9m", SuitTile, 9}, Tile{"9m", SuitTile, 9}},
+					WaitingHand: []Tile{Tile{"2m", SuitTile, 2}, Tile{"3m", SuitTile, 3}},
+				},
+				OutputHand{
+					DefiniteHand: []Tile{Tile{"1m", SuitTile, 1}, Tile{"2m", SuitTile, 2}, Tile{"3m", SuitTile, 3},
+						Tile{"4m", SuitTile, 4}, Tile{"5m", SuitTile, 5}, Tile{"6m", SuitTile, 6},
+						Tile{"7m", SuitTile, 7}, Tile{"8m", SuitTile, 8}, Tile{"9m", SuitTile, 9},
+						Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1}},
+					WaitingHand: []Tile{Tile{"9m", SuitTile, 9}, Tile{"9m", SuitTile, 9}},
+				},
+				OutputHand{
+					DefiniteHand: []Tile{Tile{"1m", SuitTile, 1}, Tile{"2m", SuitTile, 2}, Tile{"3m", SuitTile, 3},
+						Tile{"4m", SuitTile, 4}, Tile{"5m", SuitTile, 5}, Tile{"6m", SuitTile, 6},
+						Tile{"7m", SuitTile, 7}, Tile{"8m", SuitTile, 8}, Tile{"9m", SuitTile, 9},
+						Tile{"9m", SuitTile, 9}, Tile{"9m", SuitTile, 9}},
+					WaitingHand: []Tile{Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1}},
+				},
+			},
+		},
 	}
 
 	for _, tt := range testcase {
