@@ -1,23 +1,26 @@
 package gohjong
 
 import (
+	"errors"
 	"reflect"
 	"testing"
 )
 
 func TestParseHand(t *testing.T) {
 	testcase := []struct {
-		name     string
-		input    string
-		expected []Tile
+		name        string
+		input       string
+		expected    []Tile
+		wantErr     bool
+		expectedErr error
 	}{
-		{"01", "", []Tile{}},
-		{"02", "111", []Tile{}},
+		{"01", "", nil, true, errors.New("empty hand")},
+		{"02", "111", nil, true, errors.New("could not parse")},
 		{"03", "111m", []Tile{
 			Tile{name: "1m", tiletype: SuitTile, num: 1},
 			Tile{name: "1m", tiletype: SuitTile, num: 1},
-			Tile{name: "1m", tiletype: SuitTile, num: 1}}},
-		{"04", "m", nil},
+			Tile{name: "1m", tiletype: SuitTile, num: 1}}, false, nil},
+		{"04", "m", nil, true, errors.New("unknown hand")},
 	}
 
 	for _, tt := range testcase {

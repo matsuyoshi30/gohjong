@@ -22,6 +22,10 @@ type Tile struct {
 
 // ParseHand parse hand to tile slice
 func ParseHand(hand string) ([]Tile, error) {
+	if len(hand) == 0 {
+		return nil, errors.New("empty hand")
+	}
+
 	res := make([]Tile, 0)
 
 	pool := make([]int, 0)
