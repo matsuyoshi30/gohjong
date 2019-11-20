@@ -67,6 +67,50 @@ type OutputHand struct {
 	WaitingHand  []Tile
 }
 
+func ShowWaiting(hand string) ([]string, error) {
+	outputHand, err := CheckWaiting(hand)
+	if err != nil {
+		return nil, err
+	}
+
+	ret := make([]string, 0)
+	for _, output := range outputHand {
+		waitingHand := output.WaitingHand
+		if len(waitingHand) == 1 {
+			ret = append(ret, waitingHand[0].name)
+		} else { // len is 2
+			if waitingHand[0].tiletype != SuitTile {
+				ret = append(ret, waitingHand[0].name)
+			} else {
+				n1 := waitingHand[0].num
+				n2 := waitingHand[1].num
+
+				if n2-n1 == 1 {
+					if n2 == 9 {
+						ret = append(ret, strconv.Itoa(7)+string(waitingHand[0].name[1]))
+					} else if n1 == 1 {
+						ret = append(ret, strconv.Itoa(3)+string(waitingHand[0].name[1]))
+					} else {
+						s1 := strconv.Itoa(waitingHand[0].num - 1)
+						s2 := strconv.Itoa(waitingHand[1].num + 1)
+
+						ret = append(ret, s1+string(waitingHand[0].name[1])+"-"+s2+string(waitingHand[1].name[1]))
+					}
+				} else if n2-n1 == 2 {
+					s := strconv.Itoa(waitingHand[0].num + 1)
+					ret = append(ret, s+string(waitingHand[0].name[1]))
+				} else if n2-n1 == 0 {
+					ret = append(ret, waitingHand[0].name)
+				} else {
+					return nil, errors.New("unknown hand")
+				}
+			}
+		}
+	}
+
+	return ret, nil
+}
+
 // CheckWaiting check waiting tiles
 // returns mentsu, machi, and error
 func CheckWaiting(hand string) ([]OutputHand, error) {

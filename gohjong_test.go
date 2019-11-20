@@ -34,6 +34,31 @@ func TestParseHand(t *testing.T) {
 	}
 }
 
+func TestShowWaiting(t *testing.T) {
+	testcase := []struct {
+		name     string
+		input    string
+		expected []string
+	}{
+		{
+			"001",
+			"1112224588899m",
+			[]string{"3m-6m"},
+		},
+	}
+
+	for _, tt := range testcase {
+		actual, err := ShowWaiting(tt.input)
+		if err != nil {
+			t.Errorf("%s Unexpected err: %v\n", tt.name, err)
+		}
+
+		if !reflect.DeepEqual(actual, tt.expected) {
+			t.Errorf("%s expected %v, but got %v\n", tt.name, tt.expected, actual)
+		}
+	}
+}
+
 func TestCheckWaiting(t *testing.T) {
 	testcase := []struct {
 		name     string

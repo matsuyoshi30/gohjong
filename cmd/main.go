@@ -22,4 +22,9 @@ func main() {
 		fmt.Println("Waiting", s.WaitingHand)
 	}
 
+	h = "1112224577799m"
+	sw, err := gohjong.ShowWaiting(h)
+	for _, s := range sw {
+		fmt.Println(h, "is waiting", s)
+	}
 }
