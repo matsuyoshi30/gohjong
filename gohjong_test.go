@@ -21,6 +21,11 @@ func TestParseHand(t *testing.T) {
 			Tile{name: "1m", tiletype: SuitTile, num: 1},
 			Tile{name: "1m", tiletype: SuitTile, num: 1}}, false, nil},
 		{"04", "m", nil, true, errors.New("unknown hand")},
+		{"05", "11l", nil, true, errors.New("unknown hand")},
+		{"06", "EEE", []Tile{
+			Tile{name: "E", tiletype: WindTile, num: 0},
+			Tile{name: "E", tiletype: WindTile, num: 0},
+			Tile{name: "E", tiletype: WindTile, num: 0}}, false, nil},
 	}
 
 	for _, tt := range testcase {

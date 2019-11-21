@@ -44,11 +44,15 @@ func ParseHand(hand string) ([]Tile, error) {
 
 				pool = make([]int, 0)
 			} else { // len(pool) == 0 => must be E, S, W, N, D, H, T
-				if handstr != "E" && handstr != "S" && handstr != "W" && handstr != "N" &&
-					handstr != "D" && handstr != "H" && handstr != "T" {
+				var tt TileType
+				if handstr == "E" || handstr == "S" || handstr == "W" || handstr == "N" {
+					tt = WindTile
+				} else if handstr == "D" || handstr == "H" || handstr == "T" {
+					tt = ThreeDragonTile
+				} else {
 					return nil, errors.New("unknown hand")
 				}
-				res = append(res, Tile{name: handstr})
+				res = append(res, Tile{name: handstr, tiletype: tt, num: 0})
 			}
 		} else { // num
 			i, err := strconv.Atoi(string(hand[i]))
