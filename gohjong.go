@@ -140,6 +140,8 @@ func containWaiting(sl []string, s string) bool {
 	return false
 }
 
+var candidate = []string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "E", "S", "W", "N", "D", "H", "T"}
+
 // CheckWaiting check waiting tiles
 // returns mentsu, machi, and error
 func CheckWaiting(hand string) ([]OutputHand, error) {
@@ -152,11 +154,11 @@ func CheckWaiting(hand string) ([]OutputHand, error) {
 
 	// check waiting
 	// check toistu kotsu kotsu kotsu kotsu
-	for i := 0; i <= 9; i++ {
+	for i := 0; i < len(candidate); i++ {
 		definite := make([]Tile, 0)
 		resthand := make([]Tile, 0)
 
-		resthand, toitsu := checkToitsu(handTile, i)
+		resthand, toitsu := checkToitsu(handTile, candidate[i])
 		resthand, kotsu1 := checkKotsu(resthand)
 		resthand, kotsu2 := checkKotsu(resthand)
 		resthand, kotsu3 := checkKotsu(resthand)
@@ -180,11 +182,11 @@ func CheckWaiting(hand string) ([]OutputHand, error) {
 	}
 
 	// check toitsu shuntsu kotsu kotsu kotsu
-	for i := 0; i <= 9; i++ {
+	for i := 0; i < len(candidate); i++ {
 		definite := make([]Tile, 0)
 		resthand := make([]Tile, 0)
 
-		resthand, toitsu := checkToitsu(handTile, i)
+		resthand, toitsu := checkToitsu(handTile, candidate[i])
 		for j := 1; j <= 7; j++ {
 			resthand, shuntsu := checkShuntsu(resthand, j)
 			if shuntsu != nil {
@@ -212,11 +214,11 @@ func CheckWaiting(hand string) ([]OutputHand, error) {
 	}
 
 	// check toitsu shuntsu shuntsu kotsu kotsu
-	for i := 0; i <= 9; i++ {
+	for i := 0; i < len(candidate); i++ {
 		definite := make([]Tile, 0)
 		resthand := make([]Tile, 0)
 
-		resthand, toitsu := checkToitsu(handTile, i)
+		resthand, toitsu := checkToitsu(handTile, candidate[i])
 		for j := 1; j <= 7; j++ {
 			resthand, shuntsu1 := checkShuntsu(resthand, j)
 			if shuntsu1 != nil {
@@ -248,11 +250,11 @@ func CheckWaiting(hand string) ([]OutputHand, error) {
 	}
 
 	// check toitsu shuntsu shuntsu shuntsu kotsu
-	for i := 0; i <= 9; i++ {
+	for i := 0; i < len(candidate); i++ {
 		definite := make([]Tile, 0)
 		resthand := make([]Tile, 0)
 
-		resthand, toitsu := checkToitsu(handTile, i)
+		resthand, toitsu := checkToitsu(handTile, candidate[i])
 		for j := 1; j <= 7; j++ {
 			resthand, shuntsu1 := checkShuntsu(resthand, j)
 			if shuntsu1 != nil {
@@ -288,11 +290,11 @@ func CheckWaiting(hand string) ([]OutputHand, error) {
 	}
 
 	// check toitsu shuntsu shuntsu shuntsu shuntsu
-	for i := 0; i <= 9; i++ {
+	for i := 0; i < len(candidate); i++ {
 		definite := make([]Tile, 0)
 		resthand := make([]Tile, 0)
 
-		resthand, toitsu := checkToitsu(handTile, i)
+		resthand, toitsu := checkToitsu(handTile, candidate[i])
 		for j := 1; j <= 7; j++ {
 			resthand, shuntsu1 := checkShuntsu(resthand, j)
 			if shuntsu1 != nil {
@@ -338,12 +340,19 @@ func checkTenpai(resthand []Tile) bool {
 	}
 
 	if len(resthand) == 2 {
-		if resthand[0].tiletype != SuitTile || resthand[1].tiletype != SuitTile {
+		if resthand[0].tiletype != resthand[1].tiletype {
 			return false
 		}
-
-		if resthand[1].num-resthand[0].num <= 2 {
-			return true
+		if resthand[0].tiletype == SuitTile {
+			if resthand[1].num-resthand[0].num <= 2 {
+				return true
+			}
+		} else {
+			if resthand[0].name == resthand[1].name {
+				return true
+			} else {
+				return false
+			}
 		}
 	}
 
@@ -351,17 +360,29 @@ func checkTenpai(resthand []Tile) bool {
 }
 
 // checkToitsu whether hand has toitsu pairng n like 11
-func checkToitsu(hand []Tile, n int) ([]Tile, []Tile) {
+func checkToitsu(hand []Tile, c string) ([]Tile, []Tile) {
 	var toitsu []Tile
+
+	n, err := strconv.Atoi(c)
 
 	for i := 0; i < len(hand)-1; i++ {
 		h1 := hand[i]
 		h2 := hand[i+1]
-		if h1.num == n && h2.num == n {
-			toitsu = []Tile{h1, h2}
-			hand = remove(hand, h1)
-			hand = remove(hand, h2)
-			break
+
+		if err != nil {
+			if h1.name == c && h2.name == c {
+				toitsu = []Tile{h1, h2}
+				hand = remove(hand, h1)
+				hand = remove(hand, h2)
+				break
+			}
+		} else {
+			if h1.num == n && h2.num == n {
+				toitsu = []Tile{h1, h2}
+				hand = remove(hand, h1)
+				hand = remove(hand, h2)
+				break
+			}
 		}
 	}
 
@@ -375,11 +396,13 @@ func checkShuntsu(hand []Tile, n int) ([]Tile, []Tile) {
 	n3 := index(hand, n+2)
 
 	var out []Tile
-	if n1.num != -1 && n2.num != -1 && n3.num != -1 {
-		out = []Tile{n1, n2, n3}
-		hand = remove(hand, n1)
-		hand = remove(hand, n2)
-		hand = remove(hand, n3)
+	if n1.tiletype == SuitTile && n2.tiletype == SuitTile && n3.tiletype == SuitTile {
+		if n1.num != -1 && n2.num != -1 && n3.num != -1 {
+			out = []Tile{n1, n2, n3}
+			hand = remove(hand, n1)
+			hand = remove(hand, n2)
+			hand = remove(hand, n3)
+		}
 	}
 
 	return hand, out
@@ -389,17 +412,28 @@ func checkShuntsu(hand []Tile, n int) ([]Tile, []Tile) {
 func checkKotsu(hand []Tile) ([]Tile, []Tile) {
 	var kotsu []Tile
 
-	for i := 0; i <= 9; i++ {
+	for i := 0; i < len(candidate); i++ {
 		for j := 0; j < len(hand)-2; j++ {
 			h1 := hand[j]
 			h2 := hand[j+1]
 			h3 := hand[j+2]
-			if h1.num == i && h2.num == i && h3.num == i {
-				kotsu = []Tile{h1, h2, h3}
-				hand = remove(hand, h1)
-				hand = remove(hand, h2)
-				hand = remove(hand, h3)
-				return hand, kotsu
+
+			if h1.tiletype == SuitTile && h2.tiletype == SuitTile && h3.tiletype == SuitTile {
+				if h1.num == i && h2.num == i && h3.num == i {
+					kotsu = []Tile{h1, h2, h3}
+					hand = remove(hand, h1)
+					hand = remove(hand, h2)
+					hand = remove(hand, h3)
+					return hand, kotsu
+				}
+			} else {
+				if h1.name == candidate[i] && h2.name == candidate[i] && h3.name == candidate[i] {
+					kotsu = []Tile{h1, h2, h3}
+					hand = remove(hand, h1)
+					hand = remove(hand, h2)
+					hand = remove(hand, h3)
+					return hand, kotsu
+				}
 			}
 		}
 	}

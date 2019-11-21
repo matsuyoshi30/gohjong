@@ -239,6 +239,39 @@ func TestCheckWaiting(t *testing.T) {
 				},
 			},
 		},
+		{
+			"006",
+			"111m111s111pEEES",
+			[]OutputHand{
+				OutputHand{
+					DefiniteHand: []Tile{Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1},
+						Tile{"1s", SuitTile, 1}, Tile{"1s", SuitTile, 1}, Tile{"1s", SuitTile, 1},
+						Tile{"1p", SuitTile, 1}, Tile{"1p", SuitTile, 1}, Tile{"1p", SuitTile, 1},
+						Tile{"E", WindTile, 0}, Tile{"E", WindTile, 0}, Tile{"E", WindTile, 0}},
+					WaitingHand: []Tile{Tile{"S", WindTile, 0}},
+				},
+			},
+		},
+		{
+			"007",
+			"111m111s111pEEWW",
+			[]OutputHand{
+				OutputHand{
+					DefiniteHand: []Tile{Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1},
+						Tile{"1s", SuitTile, 1}, Tile{"1s", SuitTile, 1}, Tile{"1s", SuitTile, 1},
+						Tile{"1p", SuitTile, 1}, Tile{"1p", SuitTile, 1}, Tile{"1p", SuitTile, 1},
+						Tile{"E", WindTile, 0}, Tile{"E", WindTile, 0}},
+					WaitingHand: []Tile{Tile{"W", WindTile, 0}, Tile{"W", WindTile, 0}},
+				},
+				OutputHand{
+					DefiniteHand: []Tile{Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1}, Tile{"1m", SuitTile, 1},
+						Tile{"1s", SuitTile, 1}, Tile{"1s", SuitTile, 1}, Tile{"1s", SuitTile, 1},
+						Tile{"1p", SuitTile, 1}, Tile{"1p", SuitTile, 1}, Tile{"1p", SuitTile, 1},
+						Tile{"W", WindTile, 0}, Tile{"W", WindTile, 0}},
+					WaitingHand: []Tile{Tile{"E", WindTile, 0}, Tile{"E", WindTile, 0}},
+				},
+			},
+		},
 	}
 
 	for _, tt := range testcase {
