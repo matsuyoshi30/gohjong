@@ -48,6 +48,16 @@ func TestShowWaiting(t *testing.T) {
 			"1112224588899m",
 			[]string{"3m-6m"},
 		},
+		{
+			"002",
+			"1112224688899m",
+			[]string{"5m"},
+		},
+		{
+			"003",
+			"1112223355566m",
+			[]string{"6m", "3m"},
+		},
 	}
 
 	for _, tt := range testcase {

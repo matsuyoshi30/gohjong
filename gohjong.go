@@ -91,20 +91,23 @@ func ShowWaiting(hand string) ([]string, error) {
 
 				if n2-n1 == 1 {
 					if n2 == 9 {
-						ret = append(ret, strconv.Itoa(7)+string(waitingHand[0].name[1]))
+						w := "7" + string(waitingHand[0].name[1])
+						ret = appendWaiting(ret, w)
 					} else if n1 == 1 {
-						ret = append(ret, strconv.Itoa(3)+string(waitingHand[0].name[1]))
+						w := "3" + string(waitingHand[0].name[1])
+						ret = appendWaiting(ret, w)
 					} else {
 						s1 := strconv.Itoa(waitingHand[0].num - 1)
 						s2 := strconv.Itoa(waitingHand[1].num + 1)
+						w := s1 + string(waitingHand[0].name[1]) + "-" + s2 + string(waitingHand[1].name[1])
 
-						ret = append(ret, s1+string(waitingHand[0].name[1])+"-"+s2+string(waitingHand[1].name[1]))
+						ret = appendWaiting(ret, w)
 					}
 				} else if n2-n1 == 2 {
 					s := strconv.Itoa(waitingHand[0].num + 1)
-					ret = append(ret, s+string(waitingHand[0].name[1]))
+					ret = appendWaiting(ret, s+string(waitingHand[0].name[1]))
 				} else if n2-n1 == 0 {
-					ret = append(ret, waitingHand[0].name)
+					ret = appendWaiting(ret, waitingHand[0].name)
 				} else {
 					return nil, errors.New("unknown hand")
 				}
@@ -113,6 +116,24 @@ func ShowWaiting(hand string) ([]string, error) {
 	}
 
 	return ret, nil
+}
+
+func appendWaiting(wl []string, w string) []string {
+	if !containWaiting(wl, w) {
+		wl = append(wl, w)
+	}
+
+	return wl
+}
+
+func containWaiting(sl []string, s string) bool {
+	for _, ss := range sl {
+		if ss == s {
+			return true
+		}
+	}
+
+	return false
 }
 
 // CheckWaiting check waiting tiles
